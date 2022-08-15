@@ -1,5 +1,6 @@
 [package]
 name = "chain-registry"
+description = "A library for interacting with the Cosmos chain registry repository"
 authors = ["Collin Brittain"]
 version = "0.1.0"
 edition = "2021"
