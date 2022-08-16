@@ -1,5 +1,7 @@
 #![cfg(feature = "cache")]
-/// Provides caching of registry data for easy querying and filtering.
+/// Provides caching of registry data for easy querying and filtering. It's recommended to populate the cache during the startup
+/// for a long-running process as construction involves sending an individual GET request for every path in the registry which
+/// takes a while.
 use crate::{paths::{IBCPath, Tag}, get::*};
 use eyre::Report;
 use serde::{Deserialize, Serialize};
