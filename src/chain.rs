@@ -17,6 +17,8 @@ pub struct ChainInfo {
     pub codebase: Codebase,
     pub peers: Peers,
     pub apis: Apis,
+    pub fees: Fees,
+    pub staking: Staking,
 }
 
 #[derive(Clone, Debug, Default, Deserialize, Serialize)]
@@ -85,4 +87,33 @@ pub struct Rest {
 pub struct Grpc {
     pub address: String,
     pub provider: Option<String>,
+}
+
+#[derive(Clone, Debug, Default, Deserialize, Serialize)]
+#[serde(default)]
+pub struct Fees {
+    #[serde(skip_serializing_if = "Vec::is_empty", default = "Vec::new")]
+    pub fee_tokens: Vec<FeeToken>,
+}
+
+#[derive(Clone, Debug, Default, Deserialize, Serialize)]
+#[serde(default)]
+pub struct FeeToken {
+    pub denom: String,
+    pub low_gas_price: f32,
+    pub average_gas_price: f32,
+    pub high_gas_price: f32,
+}
+
+#[derive(Clone, Debug, Default, Deserialize, Serialize)]
+#[serde(default)]
+pub struct Staking {
+    #[serde(skip_serializing_if = "Vec::is_empty", default = "Vec::new")]
+    pub staking_tokens: Vec<StakingToken>,
+}
+
+#[derive(Clone, Debug, Default, Deserialize, Serialize)]
+#[serde(default)]
+pub struct StakingToken {
+    pub denom: String,
 }
