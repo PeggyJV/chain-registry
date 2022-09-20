@@ -2,8 +2,11 @@
 /// Provides caching of registry data for easy querying and filtering. It's recommended to populate the cache during the startup
 /// for a long-running process as construction involves sending an individual GET request for every path in the registry which
 /// takes a while.
-use crate::{paths::{IBCPath, Tag}, get::*};
-use eyre::Report;
+use crate::{
+    get::*,
+    paths::{IBCPath, Tag},
+};
+use eyre::Result;
 use serde::{Deserialize, Serialize};
 use std::{cmp::Ordering, collections::HashMap};
 
@@ -24,11 +27,7 @@ impl RegistryCache {
     ///
     /// * `chain_a` - A chain name. Must match a directory name in the root of the chain registry repository `<https://github.com/cosmos/chain-registry>`
     /// * `chain_b` - A chain name. Must match a directory name in the root of the chain registry repository `<https://github.com/cosmos/chain-registry>`
-    pub async fn get_path(
-        &self,
-        chain_a: &str,
-        chain_b: &str,
-    ) -> Result<Option<IBCPath>, Report> {
+    pub async fn get_path(&self, chain_a: &str, chain_b: &str) -> Result<Option<IBCPath>> {
         let path_name = match chain_a.cmp(chain_b) {
             Ordering::Less => chain_a.to_string() + "-" + chain_b,
             Ordering::Equal => return Ok(None),
@@ -56,7 +55,7 @@ impl RegistryCache {
     /// // paths will contain a vec of all IBC paths containing the tag dex:osmosis
     /// let paths = cache.get_paths_filtered(Tag::Dex(dex))?;
     /// ```
-    pub async fn get_paths_filtered(&self, tag: Tag) -> Result<Vec<IBCPath>, Report> {
+    pub async fn get_paths_filtered(&self, tag: Tag) -> Result<Vec<IBCPath>> {
         Ok(self
             .paths
             .iter()
@@ -71,7 +70,7 @@ impl RegistryCache {
     }
 
     /// Creates a new cache by retrieving and deserializing each [`IBCPath`] from the Cosmos Chain Registry for easy filtering
-    pub async fn try_new() -> Result<RegistryCache, Report> {
+    pub async fn try_new() -> Result<RegistryCache> {
         let path_names = list_paths().await?;
         let mut paths = HashMap::<String, IBCPath>::default();
 
@@ -82,9 +81,7 @@ impl RegistryCache {
             // retrieved earlier, therefore the Option returned should never be None.
             paths.insert(
                 pn.clone(),
-                get_path(cn[0], cn[1])
-                    .await?
-                    .expect("path returned None"),
+                get_path(cn[0], cn[1]).await?.expect("path returned None"),
             );
         }
 

@@ -4,7 +4,7 @@
 //!
 //! Populating a config struct with some of the information needed to execute transactions against a chain (doesn't compile)
 //!
-//! ```rust
+//! ```ignore
 //! use chain_registry::*;
 //!
 //! #[derive(Clone, Default)]
@@ -54,7 +54,7 @@
 //!
 //! Front-loading an IBC path cache for use with a REST API or indexer (doesn't compile)
 //!
-//! ```rust
+//! ```ignore
 //! use chain_registry::*;
 //!
 //! #[tokio::main]
