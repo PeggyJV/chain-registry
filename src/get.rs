@@ -8,11 +8,10 @@ pub use crate::{assets::*, chain::*, paths::*};
 #[cfg(all(feature = "registry-cache"))]
 pub use self::cache::*;
 
-
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 // In the future we may want to provide a way for a user to set the desired ref for the registry
 // module to use when querying.
-const GIT_REF: &str = "d063b0fd6d1c20d6476880e5ea2212ade009f69e";
+const GIT_REF: &str = "350840e766f7574a120760a13eda4c466413308a";
 const RAW_FILE_REPO_URL: &str = "https://raw.githubusercontent.com/cosmos/chain-registry";
 const REPO_URL: &str = "https://api.github.com/repos/cosmos/chain-registry/contents";
 
