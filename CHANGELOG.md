@@ -1,7 +1,10 @@
-# 0.2.0.rc2
+# 0.2.0-rc3
+
+- Remove `deny_unknown_fields` serde directive
+
+# 0.2.0-rc2
 
 - Add missing fields to chain model
-- Remove `deny_unknown_fields` serde directive
 
 # 0.2.0-rc1
 

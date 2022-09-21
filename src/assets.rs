@@ -2,14 +2,14 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, Default, Deserialize, Serialize)]
-#[serde(default, deny_unknown_fields)]
+#[serde(default,)]
 pub struct AssetList {
     pub chain_name: String,
     pub assets: Vec<Asset>,
 }
 
 #[derive(Clone, Debug, Default, Deserialize, Serialize)]
-#[serde(default, deny_unknown_fields)]
+#[serde(default,)]
 pub struct Asset {
     pub description: String,
     pub denom_units: Vec<DenomUnit>,
@@ -23,14 +23,14 @@ pub struct Asset {
 }
 
 #[derive(Clone, Debug, Default, Deserialize, Serialize)]
-#[serde(default, deny_unknown_fields)]
+#[serde(default,)]
 pub struct DenomUnit {
     pub denom: String,
     pub exponent: u16,
 }
 
 #[derive(Clone, Debug, Default, Deserialize, Serialize)]
-#[serde(default, deny_unknown_fields)]
+#[serde(default,)]
 pub struct LogoURIs {
     pub png: String,
     pub svg: String,
