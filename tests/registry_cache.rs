@@ -1,4 +1,5 @@
 #![cfg(all(feature = "cache"))]
+#![cfg_attr(docsrs, doc(cfg(feature = "cache")))]
 use assay::assay;
 use chain_registry::{cache::RegistryCache, paths::Tag};
 
