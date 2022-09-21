@@ -45,6 +45,10 @@ pub struct Codebase {
     #[serde(skip_serializing_if = "Vec::is_empty", default = "Vec::new")]
     pub compatible_versions: Vec<String>,
     pub binaries: Binaries,
+    pub cosmos_sdk_version: String,
+    pub tendermint_version: String,
+    pub cosmwasm_version: String,
+    pub cosmwasm_enabled: bool,
 }
 
 #[derive(Clone, Debug, Default, Deserialize, PartialEq, Serialize)]
