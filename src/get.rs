@@ -1,12 +1,9 @@
 use crate::github::Content;
-use eyre::Report;
-use http::Method;
+use eyre::{eyre, Context, Result};
+use http::{Method, StatusCode};
 use serde::de::DeserializeOwned;
 
 pub use crate::{assets::*, chain::*, paths::*};
-
-#[cfg(all(feature = "registry-cache"))]
-pub use self::cache::*;
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 // In the future we may want to provide a way for a user to set the desired ref for the registry
@@ -15,7 +12,7 @@ const GIT_REF: &str = "350840e766f7574a120760a13eda4c466413308a";
 const RAW_FILE_REPO_URL: &str = "https://raw.githubusercontent.com/cosmos/chain-registry";
 const REPO_URL: &str = "https://api.github.com/repos/cosmos/chain-registry/contents";
 
-async fn get(url: String) -> Result<String, Report> {
+async fn get(url: String) -> Result<String> {
     let client = reqwest::Client::new();
     let req = client
         .request(Method::GET, url)
@@ -25,7 +22,7 @@ async fn get(url: String) -> Result<String, Report> {
 }
 
 /// Gets a list of chain names from the registry
-pub async fn list_chains() -> Result<Vec<String>, Report> {
+pub async fn list_chains() -> Result<Vec<String>> {
     let url = format!("{}?ref={}", REPO_URL, GIT_REF,);
     let json: String = get(url).await?;
     let contents: Vec<Content> = serde_json::from_str(json.as_str())?;
@@ -38,7 +35,7 @@ pub async fn list_chains() -> Result<Vec<String>, Report> {
 }
 
 /// Gets a list of path names from the registry in the form <chain_a>-<chain_b>
-pub async fn list_paths() -> Result<Vec<String>, Report> {
+pub async fn list_paths() -> Result<Vec<String>> {
     let url = format!("{}/_IBC?ref={}", REPO_URL, GIT_REF,);
     let json: String = get(url).await?;
     let contents: Vec<Content> = serde_json::from_str(json.as_str())?;
@@ -57,7 +54,7 @@ pub async fn list_paths() -> Result<Vec<String>, Report> {
 ///
 /// * `name` - The chain name. Must match the name of the chain's folder in the root directory of the
 /// [chain registry](https://github.com/cosmos/chain-registry).
-pub async fn get_assets(name: &str) -> Result<Option<AssetList>, Report> {
+pub async fn get_assets(name: &str) -> Result<Option<AssetList>> {
     let path = format!("{}/assetlist.json", name);
     let data = get_file_content(GIT_REF, &path).await?;
 
@@ -71,7 +68,7 @@ pub async fn get_assets(name: &str) -> Result<Option<AssetList>, Report> {
 ///
 /// * `name` - The chain name. Must match the name of the chain's folder in the root directory of the
 /// [chain registry](https://github.com/cosmos/chain-registry).
-pub async fn get_chain(name: &str) -> Result<Option<ChainInfo>, Report> {
+pub async fn get_chain(name: &str) -> Result<Option<ChainInfo>> {
     let path = format!("{}/chain.json", name);
     let data = get_file_content(GIT_REF, &path).await?;
 
@@ -85,7 +82,7 @@ pub async fn get_chain(name: &str) -> Result<Option<ChainInfo>, Report> {
 ///
 /// * `name` - The chain name. Must match the name of the chain's folder in the root directory of the
 /// [chain registry](https://github.com/cosmos/chain-registry).
-pub async fn get_path(chain_a: &str, chain_b: &str) -> Result<Option<IBCPath>, Report> {
+pub async fn get_path(chain_a: &str, chain_b: &str) -> Result<Option<IBCPath>> {
     // path names order the chain names alphabetically
     let path = format!(
         "_IBC/{}-{}.json",
@@ -97,16 +94,28 @@ pub async fn get_path(chain_a: &str, chain_b: &str) -> Result<Option<IBCPath>, R
     Ok(parse_json(data).await)
 }
 
-async fn get_file_content(r#ref: &str, path: &str) -> Result<String, Report> {
+async fn get_file_content(r#ref: &str, path: &str) -> Result<String> {
     let url = format!("{}/{}/{}", RAW_FILE_REPO_URL, r#ref, path);
-    Ok(reqwest::get(url).await?.text().await?)
+    let response = reqwest::get(url).await?; //.text().await?
+
+    if response.status() == StatusCode::NOT_FOUND {
+        return Err(eyre!("path {} not found", path));
+    }
+
+    response
+        .text()
+        .await
+        .wrap_err("error getting remote file content")
 }
 
 async fn parse_json<T>(data: String) -> Option<T>
 where
-    T: DeserializeOwned,
+    T: core::fmt::Debug + DeserializeOwned,
 {
-    serde_json::from_str(&data).ok()
+    let result = serde_json::from_str(&data);
+    println!("{:?}", result);
+
+    result.ok()
 }
 
 #[cfg(test)]
@@ -171,10 +180,10 @@ mod tests {
     }
 
     #[assay]
-    async fn get_path_not_present_returns_none() {
+    async fn get_path_not_present_errors() {
         let chain_a = "fake";
         let chain_b = "osmosis";
-        let result = get_path(chain_b, chain_a).await.unwrap();
-        assert!(result.is_none())
+        let result = get_path(chain_b, chain_a).await;
+        assert!(result.is_err())
     }
 }

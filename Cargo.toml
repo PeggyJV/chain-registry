@@ -2,11 +2,16 @@
 name = "chain-registry"
 description = "A library for interacting with the Cosmos chain registry repository"
 authors = ["Collin Brittain"]
-version = "0.1.0"
+version = "0.1.1-rc1"
 edition = "2021"
 license = "Apache-2.0"
+documentation = "https://docs.rs/chain-registry/latest/chain-registry/"
 repository = "https://github.com/peggyjv/chain-registry"
 readme = "README.md"
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
 
 [dependencies]
 assay = "0.1"
