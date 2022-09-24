@@ -8,7 +8,7 @@ pub use crate::{assets::*, chain::*, paths::*};
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 // In the future we may want to provide a way for a user to set the desired ref for the registry
 // module to use when querying.
-const GIT_REF: &str = "350840e766f7574a120760a13eda4c466413308a";
+const GIT_REF: &str = "1ec726b7308a71ce0cb02916b1929979c6f2e39d";
 const RAW_FILE_REPO_URL: &str = "https://raw.githubusercontent.com/cosmos/chain-registry";
 const REPO_URL: &str = "https://api.github.com/repos/cosmos/chain-registry/contents";
 
