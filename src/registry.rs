@@ -4,10 +4,13 @@ use crate::github::Content;
 use eyre::{eyre, Context, Result};
 use http::{Method, StatusCode};
 use serde::de::DeserializeOwned;
+use serde::{Deserialize, Serialize};
 
 pub use crate::{assets::*, chain::*, paths::*};
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Repo {
     pub git_ref: Ref,
     pub url: String,
@@ -24,6 +27,7 @@ impl Default for Repo {
     }
 }
 
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub enum Ref {
     /// Use the latest commit
     Latest,
@@ -39,6 +43,7 @@ impl fmt::Display for Ref {
     }
 }
 
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Registry {
     pub repo: Repo,
 }
