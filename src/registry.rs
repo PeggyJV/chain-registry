@@ -20,7 +20,7 @@ pub struct Repo {
 impl Default for Repo {
     fn default() -> Self {
         Self {
-            git_ref: Ref::SHA("1ec726b7308a71ce0cb02916b1929979c6f2e39d".to_string()),
+            git_ref: Ref::SHA("db2c88227632fc3d7600e7dc75171373b80d948b".to_string()),
             url: "https://api.github.com/repos/cosmos/chain-registry/contents".to_string(),
             raw_file_url: "https://raw.githubusercontent.com/cosmos/chain-registry".to_string(),
         }
