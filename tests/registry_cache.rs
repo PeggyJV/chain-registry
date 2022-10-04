@@ -1,11 +1,12 @@
 #![cfg(all(feature = "cache"))]
 #![cfg_attr(docsrs, doc(cfg(feature = "cache")))]
 use assay::assay;
-use chain_registry::{cache::RegistryCache, paths::Tag};
+use chain_registry::{cache::RegistryCache, paths::Tag, registry::Registry};
 
 #[assay]
 async fn registry_cache_happy_path() {
-    let cache = RegistryCache::try_new()
+    let registry = Registry::new(None);
+    let cache = RegistryCache::try_new(&registry)
         .await
         .expect("failed to initialize cache");
     let chain_a = "cosmoshub";
