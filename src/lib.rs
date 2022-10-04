@@ -41,9 +41,10 @@
 //!
 //! #[tokio::main]
 //! fn main() {
-//!     let chain = get_chain("osmosis").await.unwrap();
-//!     let assets = get_assets("osmosis").await.unwrap();
-//!     let osmosis_hub_path = get_path("osmosis", "cosmoshub").await.unwrap();
+//!     let registry = Registry::new(None);
+//!     let chain = registry.get_chain("osmosis").await.unwrap();
+//!     let assets = registry.get_assets("osmosis").await.unwrap();
+//!     let osmosis_hub_path = registry.get_path("osmosis", "cosmoshub").await.unwrap();
 //!     let mut config: BotConfig = chain.into();
 //!
 //!     config.set_default_asset(assets[0]);
@@ -77,9 +78,9 @@ pub mod chain;
 /// A cache type for reading IBC path data into memory for faster and filterable queries
 pub mod cache;
 
-/// API for getting and listing data from the registry Github repo
-pub mod get;
 pub mod github;
+/// API for getting and listing data from the registry Github repo
+pub mod registry;
 
 /// Modles for IBC path JSON ser/de
 pub mod paths;

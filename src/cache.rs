@@ -4,8 +4,8 @@
 /// for a long-running process as construction involves sending an individual GET request for every path in the registry which
 /// takes a while.
 use crate::{
-    get::*,
     paths::{IBCPath, Tag},
+    registry::*,
 };
 use eyre::Result;
 use serde::{Deserialize, Serialize};
@@ -48,9 +48,11 @@ impl RegistryCache {
     ///
     /// ```ignore
     /// use chain_registry::cache::{RegistryCache, Tag};
+    /// use chain_registry::registry::Registry;
     ///
     /// // store paths from the registry repository in a cache
-    /// let cache = RegistryCache::try_new().await?;
+    /// let registry = Registry::new(None);
+    /// let cache = RegistryCache::try_new(&registry).await?;
     /// let dex = "osmosis".to_string();
     ///
     /// // paths will contain a vec of all IBC paths containing the tag dex:osmosis
@@ -70,9 +72,9 @@ impl RegistryCache {
             .collect())
     }
 
-    /// Creates a new cache by retrieving and deserializing each [`IBCPath`] from the Cosmos Chain Registry for easy filtering
-    pub async fn try_new() -> Result<RegistryCache> {
-        let path_names = list_paths().await?;
+    /// Creates a new cache by retrieving and deserializing each [`IBCPath`] from the provided [`Registry`] for easy filtering
+    pub async fn try_new(registry: &Registry) -> Result<RegistryCache> {
+        let path_names = registry.list_paths().await?;
         let mut paths = HashMap::<String, IBCPath>::default();
 
         for pn in path_names {
@@ -82,7 +84,10 @@ impl RegistryCache {
             // retrieved earlier, therefore the Option returned should never be None.
             paths.insert(
                 pn.clone(),
-                get_path(cn[0], cn[1]).await?.expect("path returned None"),
+                registry
+                    .get_path(cn[0], cn[1])
+                    .await?
+                    .expect("path returned None"),
             );
         }
 
