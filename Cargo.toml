@@ -15,11 +15,9 @@ rustdoc-args = ["--cfg", "docsrs"]
 
 [dependencies]
 assay = "0.1"
-eyre = "0.6"
 http = "0.2"
-reqwest = "0.11"
+reqwest = { version = "0.11", features = ["json"] }
 serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0"
 
 [features]
 default = ["cache"]
