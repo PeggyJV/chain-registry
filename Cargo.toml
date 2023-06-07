@@ -16,9 +16,16 @@ rustdoc-args = ["--cfg", "docsrs"]
 [dependencies]
 assay = "0.1"
 http = "0.2"
-reqwest = { version = "0.11", features = ["json"] }
 serde = { version = "1.0", features = ["derive"] }
 
+reqwest-crate = { package = "reqwest", version = "^0.11", features = [
+    "json",
+], default-features = false, optional = true }
+
 [features]
-default = ["cache"]
+default = ["cache", "reqwest"]
 cache = []
+
+reqwest = ["reqwest-crate", "reqwest-crate/default-tls"]
+reqwest-rustls = ["reqwest-crate", "reqwest-crate/rustls-tls"]
+reqwest-blocking = ["reqwest-crate/blocking"]

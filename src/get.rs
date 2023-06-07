@@ -4,6 +4,7 @@ use serde::de::DeserializeOwned;
 
 pub use crate::{assets::*, chain::*, paths::*};
 use reqwest::Result as HttpResult;
+use reqwest_crate as reqwest;
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 // In the future we may want to provide a way for a user to set the desired ref for the registry

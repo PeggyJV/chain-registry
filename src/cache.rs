@@ -8,6 +8,7 @@ use crate::{
     paths::{IBCPath, Tag},
 };
 use reqwest::Result as HttpResult;
+use reqwest_crate as reqwest;
 use serde::{Deserialize, Serialize};
 use std::{cmp::Ordering, collections::HashMap};
 
