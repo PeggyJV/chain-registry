@@ -9,7 +9,7 @@ use reqwest_crate as reqwest;
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 // In the future we may want to provide a way for a user to set the desired ref for the registry
 // module to use when querying.
-const GIT_REF: &str = "f96992f3f0eb4248836fca010301d912e56bae0c";
+const GIT_REF: &str = "fa7ae5ff6dc510afdb953d7f7eca5d87040669aa";
 const RAW_FILE_REPO_URL: &str = "https://raw.githubusercontent.com/cosmos/chain-registry";
 const REPO_URL: &str = "https://api.github.com/repos/cosmos/chain-registry/contents";
 
