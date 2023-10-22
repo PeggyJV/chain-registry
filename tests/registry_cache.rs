@@ -1,4 +1,4 @@
-#![cfg(all(feature = "cache"))]
+#![cfg(feature = "cache")]
 #![cfg_attr(docsrs, doc(cfg(feature = "cache")))]
 use assay::assay;
 use chain_registry::{cache::RegistryCache, paths::Tag};
@@ -21,30 +21,21 @@ async fn registry_cache_happy_path() {
 
     // filter by tag values known to be present in at least one chain
     let dex = "osmosis".to_string();
-    let result = cache
-        .get_paths_filtered(Tag::Dex(dex.clone()))
-        .await
-        .unwrap();
+    let result = cache.get_paths_filtered(Tag::Dex(dex.clone())).await;
     assert!(!result.is_empty());
     result
         .iter()
         .for_each(|r| assert!(r.channels[0].tags.dex.eq(&dex)));
 
     let preferred = true;
-    let result = cache
-        .get_paths_filtered(Tag::Preferred(preferred))
-        .await
-        .unwrap();
+    let result = cache.get_paths_filtered(Tag::Preferred(preferred)).await;
     assert!(!result.is_empty());
     result
         .iter()
         .for_each(|r| assert!(r.channels[0].tags.preferred.eq(&preferred)));
 
     let status = "live".to_string();
-    let result = cache
-        .get_paths_filtered(Tag::Status(status.clone()))
-        .await
-        .unwrap();
+    let result = cache.get_paths_filtered(Tag::Status(status.clone())).await;
     assert!(!result.is_empty());
     result
         .iter()

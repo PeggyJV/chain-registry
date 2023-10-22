@@ -7,7 +7,8 @@ use crate::{
     get::*,
     paths::{IBCPath, Tag},
 };
-use eyre::Result;
+use reqwest::Result as HttpResult;
+use reqwest_crate as reqwest;
 use serde::{Deserialize, Serialize};
 use std::{cmp::Ordering, collections::HashMap};
 
@@ -28,7 +29,7 @@ impl RegistryCache {
     ///
     /// * `chain_a` - A chain name. Must match a directory name in the root of the chain registry repository `<https://github.com/cosmos/chain-registry>`
     /// * `chain_b` - A chain name. Must match a directory name in the root of the chain registry repository `<https://github.com/cosmos/chain-registry>`
-    pub async fn get_path(&self, chain_a: &str, chain_b: &str) -> Result<Option<IBCPath>> {
+    pub async fn get_path(&self, chain_a: &str, chain_b: &str) -> HttpResult<Option<IBCPath>> {
         let path_name = match chain_a.cmp(chain_b) {
             Ordering::Less => chain_a.to_string() + "-" + chain_b,
             Ordering::Equal => return Ok(None),
@@ -54,11 +55,10 @@ impl RegistryCache {
     /// let dex = "osmosis".to_string();
     ///
     /// // paths will contain a vec of all IBC paths containing the tag dex:osmosis
-    /// let paths = cache.get_paths_filtered(Tag::Dex(dex))?;
+    /// let paths = cache.get_paths_filtered(Tag::Dex(dex));
     /// ```
-    pub async fn get_paths_filtered(&self, tag: Tag) -> Result<Vec<IBCPath>> {
-        Ok(self
-            .paths
+    pub async fn get_paths_filtered(&self, tag: Tag) -> Vec<IBCPath> {
+        self.paths
             .iter()
             .filter(|kv| match &tag {
                 Tag::Dex(d) => kv.1.channels[0].tags.dex.eq(d),
@@ -67,11 +67,11 @@ impl RegistryCache {
                 Tag::Status(s) => kv.1.channels[0].tags.status.eq(s),
             })
             .map(|kv| kv.1.to_owned())
-            .collect())
+            .collect()
     }
 
     /// Creates a new cache by retrieving and deserializing each [`IBCPath`] from the Cosmos Chain Registry for easy filtering
-    pub async fn try_new() -> Result<RegistryCache> {
+    pub async fn try_new() -> HttpResult<RegistryCache> {
         let path_names = list_paths().await?;
         let mut paths = HashMap::<String, IBCPath>::default();
 
